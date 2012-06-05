@@ -51,7 +51,7 @@ sub _build_registered
 	my ( $month, $day, $year ) = split /,? /, shift->_registered;
 
 	my %months;
-		@months{ qw( January Febuary March April May June July August September October November December ) } = ( 1..12 );
+	   @months{ qw( January Febuary March April May June July August September October November December ) } = ( 1..12 );
 	
 	DateTime->new( year => $year, month => $months{ $month }, day => $day );
 }
