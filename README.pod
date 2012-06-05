@@ -4,7 +4,7 @@ A OO Perl interface to the Steam community data L<https://partner.steamgames.com
 
 =head1 USAGE
 
-	use WebService::Steam;
+	use WebService::Steam::User;
 
 	my $user = WebService::Steam::User->get( nick => 'jraspass' );
 
