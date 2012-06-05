@@ -1,2 +1,2 @@
-WebService--Steam
+WebService::Steam
 =================
