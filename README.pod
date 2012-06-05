@@ -1,3 +1,13 @@
+=head1 ABOUT
+
+A OO Perl interface to the Steam community data L<https://partner.steamgames.com/documentation/community_data>
+
+=head1 USAGE
+
+	use WebService::Steam;
+
+	my $user = WebService::Steam::User->get( nick => 'jraspass' );
+
 =head1 AUTHOR
 
 James Raspass, E<lt>jraspass@gmail.comE<gt>
