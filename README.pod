@@ -1,0 +1,10 @@
+=head1 AUTHOR
+
+James Raspass, E<lt>jraspass@gmail.comE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
