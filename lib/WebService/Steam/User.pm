@@ -46,7 +46,7 @@ sub get
 
 sub _build_registered
 {
-	my ( $month, $day, $year ) = split /,? /, shift->_registered;
+	my ( $month, $day, $year ) = split /,? /, $_[0]->_registered;
 
 	my %months;
 	   @months{ qw( January Febuary March April May June July August September October November December ) } = ( 1..12 );
