@@ -27,11 +27,9 @@ our %map = ( banned     => 'vacBanned',
 
 sub get
 {
-	my ( $class, %args ) = @_;
+	my ( $class, $user ) = $#_ ? @_ : return;
 
-	$args{ id } || $args{ nick } || return;
-
-	my $url  = 'http://steamcommunity.com/' . ( $args{ id } ? "profiles/$args{ id }" : "id/$args{ nick }" ) . '/?xml=1';
+	my $url  = 'http://steamcommunity.com/' . ( $user =~ /^\d{17}$/ ? 'profiles' : 'id' ) . "/$user/?xml=1";
 	my $xml  = `wget -q -O - $url`;
 	my $hash = XML::Bare->new( text => $xml )->parse->{ profile };
 	my $new;
