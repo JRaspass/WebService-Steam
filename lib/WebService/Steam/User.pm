@@ -4,6 +4,7 @@ use DateTime;
 use IO::All;   # IO::All::LWP also needed
 use Moose;
 use namespace::autoclean;
+use WebService::Steam::Group;
 use XML::Bare;
 
 has  banned     => ( is => 'ro', isa => 'Bool'                       );
@@ -35,7 +36,7 @@ sub get
 
 	my @users = map {
 
-		my $xml < io 'http://steamcommunity.com/' . ( /^\d{17}$/ ? 'profiles' : 'id' ) . "/$_/?xml=1";
+		my $xml < io 'http://steamcommunity.com/' . ( /^\d+$/ ? 'profiles' : 'id' ) . "/$_/?xml=1";
 
 		my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
 
@@ -62,7 +63,7 @@ sub get
 
 sub _build__groups
 {
-	[ WebService::Steam::Group->new( $_[0]->__groups ) ];
+	[ WebService::Steam::Group->get( $_[0]->__groups ) ];
 }
 
 sub _build_registered
