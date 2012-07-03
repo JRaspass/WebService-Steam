@@ -1,6 +1,7 @@
 package WebService::Steam::User;
 
 use DateTime;
+use LWP::UserAgent;
 use Moose;
 use namespace::autoclean;
 use XML::Bare;
@@ -32,13 +33,15 @@ sub get
 
 	my $class = shift;
 
+	my $ua    = LWP::UserAgent->new;
+
 	my @users = map {
 
-		my $url  = 'http://steamcommunity.com/' . ( /^\d{17}$/ ? 'profiles' : 'id' ) . "/$_/?xml=1";
+		my $response = $ua->get( 'http://steamcommunity.com/' . ( /^\d{17}$/ ? 'profiles' : 'id' ) . "/$_/?xml=1" );
 
-		my $xml  = `wget -q -O - $url`;
+		$response->is_success || next;
 
-		my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
+		my $hash = XML::Bare->new( text => $response->decoded_content )->simple->{ profile };
 
 		$class->new( banned     => $hash->{ vacBanned        },
 		             custom_url => $hash->{ customURL        },
