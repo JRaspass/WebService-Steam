@@ -1,37 +1,70 @@
 package WebService::Steam::User;
 
+use Data::Dumper;
 use DateTime;
 use Moose;
-use Moose::Util::TypeConstraints;
-use MooseX::Aliases;
 use namespace::autoclean;
 use XML::Bare;
 
-subtype 'SteamBool' => as   'Bool';
-coerce  'SteamBool' => from 'Str' => via { $_ eq 'online' || 0 };
+has  banned     => ( is => 'ro', isa => 'Bool'                       );
+has  custom_url => ( is => 'ro', isa => 'Str'                        );
+has  headline   => ( is => 'ro', isa => 'Str'                        );
+has  id         => ( is => 'ro', isa => 'Int'                        );
+has  limited    => ( is => 'ro', isa => 'Bool'                       );
+has  location   => ( is => 'ro', isa => 'Str'                        );
+has  name       => ( is => 'ro', isa => 'Str'                        );
+has  nick       => ( is => 'ro', isa => 'Str'                        );
+has  online     => ( is => 'ro', isa => 'Bool'                       );
+has  rating     => ( is => 'ro', isa => 'Num'                        );
+has _registered => ( is => 'ro', isa => 'Str'                        );
+has  registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1 );
+has  summary    => ( is => 'ro', isa => 'Str'                        );
 
-has  banned     => ( is => 'ro', isa => 'Bool'     , alias      => 'vacBanned'                );
-has  headline   => ( is => 'ro', isa => 'Str'                                                 );
-has  id         => ( is => 'ro', isa => 'Int'      , alias      => 'steamID64'                );
-has  name       => ( is => 'ro', isa => 'Str'      , alias      => 'realname'                 );
-has  nick       => ( is => 'ro', isa => 'Str'      , alias      => 'steamID'                  );
-has  online     => ( is => 'ro', isa => 'SteamBool', alias      => 'onlineState', coerce => 1 );
-has  rating     => ( is => 'ro', isa => 'Num'      , alias      => 'steamRating'              );
-has _registered => ( is => 'ro', isa => 'Str'      , alias      => 'memberSince'              );
-has  registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1                          );
-has  summary    => ( is => 'ro', isa => 'Str'                                                 );
+has __groups    => ( is         => 'ro', isa => 'ArrayRef' );
+has  _groups    => ( is         => 'ro',
+                     isa        => 'ArrayRef[WebService::Steam::Group]',
+                     traits     => [ 'Array' ],
+                     handles    => { groups => 'elements' },
+                     lazy_build => 1 );
 
 sub get
 {
-	my ( $class, $user ) = $#_ ? @_ : return;
+	$#_ || return;
 
-	my $url  = 'http://steamcommunity.com/' . ( $user =~ /^\d{17}$/ ? 'profiles' : 'id' ) . "/$user/?xml=1";
+	my $class = shift;
 
-	my $xml  = `wget -q -O - $url`;
+	my @users = map {
 
-	my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
+		my $url  = 'http://steamcommunity.com/' . ( /^\d{17}$/ ? 'profiles' : 'id' ) . "/$_/?xml=1";
 
-	$class->new( $hash );
+		my $xml  = `wget -q -O - $url`;
+
+		my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
+
+		$class->new( banned     => $hash->{ vacBanned        },
+		             custom_url => $hash->{ customURL        },
+		           __groups     => [ map { $_->{ groupID64 } } @{ $hash->{ groups }{ group } } ],
+		             headline   => $hash->{ headline         },
+		             id         => $hash->{ steamID64        },
+		             limited    => $hash->{ isLimitedAccount },
+		             location   => $hash->{ location         },
+		             name       => $hash->{ realname         },
+		             nick       => $hash->{ steamID          },
+		             online     => $hash->{ onlineState      } eq 'online',
+		             rating     => $hash->{ steamRating      },
+		            _registered => $hash->{ memberSince      },
+		             summary    => $hash->{ summary          } );
+
+	} $#_       ?   @_
+	: ref $_[0] ?  @$_[0]
+	:             ( $_[0] );
+
+	wantarray ? @users : $users[0];	
+}
+
+sub _build__groups
+{
+	[ WebService::Steam::Group->new( $_[0]->__groups ) ];
 }
 
 sub _build_registered
