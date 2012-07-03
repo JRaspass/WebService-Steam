@@ -2,46 +2,36 @@ package WebService::Steam::User;
 
 use DateTime;
 use Moose;
+use Moose::Util::TypeConstraints;
+use MooseX::Aliases;
 use namespace::autoclean;
 use XML::Bare;
 
-has  banned     => ( is => 'ro', isa => 'Bool'                                                );
-has  headline   => ( is => 'ro', isa => 'Str'                                                 );
-has  id         => ( is => 'ro', isa => 'Int'                                                 );
-has  name       => ( is => 'ro', isa => 'Str'                                                 );
-has  nick       => ( is => 'ro', isa => 'Str'                                                 );
-has  online     => ( is => 'ro', isa => 'Bool'                                                );
-has  rating     => ( is => 'ro', isa => 'Num'                                                 );
-has _registered => ( is => 'ro', isa => 'Str'                                                 );
-has  registered => ( is => 'ro', isa => 'DateTime', lazy => 1, builder => '_build_registered' );
-has  summary    => ( is => 'ro', isa => 'Str'                                                 );
+subtype 'SteamBool' => as   'Bool';
+coerce  'SteamBool' => from 'Str' => via { $_ eq 'online' || 0 };
 
-our %map = ( banned     => 'vacBanned',
-             headline   => 'headline',
-             id         => 'steamID64',
-             name       => 'realname',
-             nick       => 'steamID',
-             rating     => 'steamRating',
-            _registered => 'memberSince',
-             summary    => 'summary' );
+has  banned     => ( is => 'ro', isa => 'Bool'     , alias      => 'vacBanned'                );
+has  headline   => ( is => 'ro', isa => 'Str'                                                 );
+has  id         => ( is => 'ro', isa => 'Int'      , alias      => 'steamID64'                );
+has  name       => ( is => 'ro', isa => 'Str'      , alias      => 'realname'                 );
+has  nick       => ( is => 'ro', isa => 'Str'      , alias      => 'steamID'                  );
+has  online     => ( is => 'ro', isa => 'SteamBool', alias      => 'onlineState', coerce => 1 );
+has  rating     => ( is => 'ro', isa => 'Num'      , alias      => 'steamRating'              );
+has _registered => ( is => 'ro', isa => 'Str'      , alias      => 'memberSince'              );
+has  registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1                          );
+has  summary    => ( is => 'ro', isa => 'Str'                                                 );
 
 sub get
 {
 	my ( $class, $user ) = $#_ ? @_ : return;
 
 	my $url  = 'http://steamcommunity.com/' . ( $user =~ /^\d{17}$/ ? 'profiles' : 'id' ) . "/$user/?xml=1";
+
 	my $xml  = `wget -q -O - $url`;
-	my $hash = XML::Bare->new( text => $xml )->parse->{ profile };
-	my $new;
 
-	while ( my ( $key, $value ) = each %map )
-	{
-		$new->{ $key } = $hash->{ $value }->{ value } if $hash->{ $value }->{ value };
-	}
+	my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
 
-	$new->{ online } = $hash->{ onlineState }->{ value } eq 'offline' ? 0 : 1;
-
-	$class->new( $new );
+	$class->new( $hash );
 }
 
 sub _build_registered
