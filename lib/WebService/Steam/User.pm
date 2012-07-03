@@ -54,9 +54,9 @@ sub get
 		            _registered => $hash->{ memberSince      },
 		             summary    => $hash->{ summary          } );
 
-	} $#_       ?   @_
-	: ref $_[0] ?  @$_[0]
-	:             ( $_[0] );
+	} $#_       ?    @_
+	: ref $_[0] ? @{ $_[0] }
+	:              ( $_[0] );
 
 	wantarray ? @users : $users[0];	
 }
