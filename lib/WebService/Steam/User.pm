@@ -75,4 +75,6 @@ sub _build_registered
 	DateTime->new( year => $year, month => $months{ $month }, day => $day );
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
