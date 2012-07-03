@@ -1,6 +1,5 @@
 package WebService::Steam::User;
 
-use Data::Dumper;
 use DateTime;
 use Moose;
 use namespace::autoclean;
