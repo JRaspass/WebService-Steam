@@ -6,7 +6,18 @@ A OO Perl interface to the Steam community data L<https://partner.steamgames.com
 
 	use WebService::Steam::User;
 
-	my $user = WebService::Steam::User->get( nick => 'jraspass' );
+	my $user  = WebService::Steam::User->get( 'jraspass' );
+
+=head3 get
+ 
+Returns an instance of a Steam user, can take any combination of Steam usernames and IDs. In scalar context returns the first user.
+ 
+	my $user  = WebService::Steam::User->get( 'jraspass' );
+	my $user  = WebService::Steam::User->get( 76561198005755687 )
+	my @users = WebService::Steam::User->get(   'jraspass', 76561198005755687   );
+	my @users = WebService::Steam::User->get( [ 'jraspass', 76561198005755687 ] );
+ 
+=cut
 
 =head1 AUTHOR
 
