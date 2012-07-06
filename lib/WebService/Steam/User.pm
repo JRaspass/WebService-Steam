@@ -54,7 +54,7 @@ sub get
 		            _registered => $hash->{ memberSince      },
 		             summary    => $hash->{ summary          } );
 
-	} $#_       ?    @_
+	}     $#_   ?    @_
 	: ref $_[0] ? @{ $_[0] }
 	:              ( $_[0] );
 

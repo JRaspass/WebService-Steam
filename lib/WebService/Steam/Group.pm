@@ -1,6 +1,5 @@
 package WebService::Steam::Group;
 
-use DateTime;
 use IO::All;   # IO::All::LWP also needed
 use Moose;
 use namespace::autoclean;
@@ -24,7 +23,7 @@ sub get
 		$class->new( name    => $hash->{ groupDetails }{ groupName },
 		             summary => $hash->{ groupDetails }{ summary   } );
 
-	} $#_       ?    @_
+	}     $#_   ?    @_
 	: ref $_[0] ? @{ $_[0] }
 	:              ( $_[0] );
 
