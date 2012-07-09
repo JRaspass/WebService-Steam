@@ -1,4 +1,7 @@
 Revision history for WebService::Steam
 
-0.1 2012-07-xx
+0.2 2012-07-09
+	- Moar POD
+	- WebService::Steam::Group string overloads to the group name
+0.1 2012-07-08
 	- Initial release

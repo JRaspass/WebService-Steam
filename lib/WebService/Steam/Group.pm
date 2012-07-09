@@ -2,8 +2,10 @@ package WebService::Steam::Group;
 
 use IO::All;   # IO::All::LWP also needed
 use Moose;
-use namespace::autoclean;
+use MooseX::MarkAsMethods autoclean => 1;
 use XML::Bare;
+
+use overload '""' => sub { $_[0]->name };
 
 has name    => ( is => 'ro', isa => 'Str' );
 has summary => ( is => 'ro', isa => 'Str' );
