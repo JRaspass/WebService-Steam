@@ -100,7 +100,9 @@ WebService::Steam - An OO Perl interface to the Steam community data
 
 =head3 get
 
-Returns an instance of a Steam user, can take any combination of Steam usernames and IDs. In scalar context returns the first user.
+Returns an instance of a Steam user, can take any combination of Steam usernames and IDs.
+
+In scalar context returns the first element of the array.
  
 	my $user  = WebService::Steam::User->get(   'jraspass'                      );
 	my $user  = WebService::Steam::User->get(               76561198005755687   );
