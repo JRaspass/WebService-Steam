@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use lib 't';
+
 use Test::User;
 
-Test::User->runtests;
+$_->runtests for map "Test::$_", qw( User );

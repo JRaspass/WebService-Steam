@@ -1,23 +1,22 @@
 package Test::User;
 
 use base 'Test::Class';
-
-use Test::Most;
+use       Test::Most;
 
 sub class { 'WebService::Steam::User' }
 
-sub startup : Tests( startup => 1 )
+sub startup :Tests( startup => 1 )
 {
-	use_ok shift->class;
+	use_ok $_[0]->class;
 }
 
-sub constructor : Tests(3)
+sub constructor :Tests( 3 )
 {
-	my $class = shift->class;
+	my $class = $_[0]->class;
 
-	can_ok $class, 'new';
+	can_ok    $class, 'new';
        ok my $user = $class->new, 'new() is ok';
-	isa_ok $user, $class;
+	isa_ok    $user , $class;
 }
 
 1;
