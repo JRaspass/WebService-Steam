@@ -1,19 +1,12 @@
 package Test::User;
 
-use base 'Test::Class';
-use       Test::Most;
+use Test::Class::Most;
 
-sub class { 'WebService::Steam::User' }
-
-sub startup :Tests( startup => 1 )
+sub tests :Tests
 {
-	use_ok $_[0]->class;
-}
+	my $class = 'WebService::Steam::User';
 
-sub tests :Tests( 5 )
-{
-	my $class = $_[0]->class;
-
+	use_ok    $class;
 	can_ok    $class, 'new';
 	    ok my $user = $class->new, 'new() is ok';
 	isa_ok    $user , $class;
