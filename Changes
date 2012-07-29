@@ -1,8 +1,10 @@
 Revision history for WebService::Steam
 
+0.3 2012-07-xx
+	- More testing, mock the HTTP response
 0.2 2012-07-14
 	- Basic testing
-	- Moar POD
+	- More POD
 	- WebService::Steam::Group string overloads to the group name
 0.1 2012-07-08
 	- Initial release
