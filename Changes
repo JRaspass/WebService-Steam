@@ -1,7 +1,7 @@
 Revision history for WebService::Steam
 
 0.3 2012-07-xx
-	- More testing, mock the HTTP response
+	- More testing, duck punch IO::All::LWP's LWP::UserAgent
 0.2 2012-07-14
 	- Basic testing
 	- More POD

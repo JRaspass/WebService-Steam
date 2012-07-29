@@ -13,7 +13,7 @@ WriteMakefile( NAME           =>   'WebService::Steam',
                                    'XML::Bare'             => 0 },
                BUILD_REQUIRES => { 'ExtUtils::MakeMaker'   => 0,
                                    'Test::Class'           => 0,
-                                   'Test::Mock::LWP'       => 0,
+                                   'Test::LWP::UserAgent'  => 0,
                                    'Test::Most'            => 0 },
                dist           => { 'COMPRESS'              => 'gzip -9f',
                                    'SUFFIX'                => 'gz' }

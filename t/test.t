@@ -2,10 +2,18 @@
 
 use lib qw/lib t/;
 
-use Test::Mock::LWP;
+use IO::All::LWP;
+use Test::LWP::UserAgent;
 use Test::User;
 
-$Mock_response->mock( content => sub { local $/; <DATA> } );
+# patch the monkey, punch the duck
+
+my $ua = Test::LWP::UserAgent->new;
+   $ua->map_response( qr//, HTTP::Response->new( 200, 'OK', [ Content_Type => 'application/xml' ], do { local $/; <DATA> } ) );
+
+*IO::All::LWP::ua = sub { $ua };
+
+# run the tests
 
 $_->runtests for map "Test::@{[ /(\w+)\.pm/ ]}", <t/Test/*.pm>;
 
