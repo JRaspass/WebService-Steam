@@ -10,6 +10,8 @@ use overload '""' => sub { $_[0]->name };
 has name    => ( is => 'ro', isa => 'Str' );
 has summary => ( is => 'ro', isa => 'Str' );
 
+sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'gid' : 'groups' ]}/$_[1]/memberslistxml" }
+
 sub get
 {
 	$#_ || return;

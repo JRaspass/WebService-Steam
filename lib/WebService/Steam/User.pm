@@ -1,60 +1,41 @@
 package WebService::Steam::User;
 
+use Data::Dumper;
+
 use DateTime;
 use IO::All;   # IO::All::LWP also needed
 use Moose;
+use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 use WebService::Steam::Group;
 use XML::Bare;
 
-has   banned     => ( is => 'ro', isa => 'Bool'                              );
-has   custom_url => ( is => 'ro', isa => 'Str'                               );
-has __groups     => ( is => 'ro', isa => 'ArrayRef'                          );
+subtype 'SteamBool' =>   as 'Bool';
+coerce  'SteamBool' => from 'Str' => via { /online/ };
+
+has   banned     => ( is => 'ro', isa => 'Bool'     , init_arg   => 'vacBanned'        );
+has   custom_url => ( is => 'ro', isa => 'Str'      , init_arg   => 'customURL'        );
+has __groups     => ( is => 'ro', isa => 'HashRef'  , init_arg   => 'groups'           );
 has  _groups     => ( is => 'ro',
                      isa => 'ArrayRef[WebService::Steam::Group]',
                   traits => [ 'Array' ],
               lazy_build => 1,
-                 handles => { groups => 'elements', group_count => 'count' } );
-has   headline   => ( is => 'ro', isa => 'Str'                               );
-has   id         => ( is => 'ro', isa => 'Int'                               );
-has   limited    => ( is => 'ro', isa => 'Bool'                              );
-has   location   => ( is => 'ro', isa => 'Str'                               );
-has   name       => ( is => 'ro', isa => 'Str'                               );
-has   nick       => ( is => 'ro', isa => 'Str'                               );
-has   online     => ( is => 'ro', isa => 'Bool'                              );
-has   rating     => ( is => 'ro', isa => 'Num'                               );
-has  _registered => ( is => 'ro', isa => 'Str'                               );
-has   registered => ( is => 'ro', isa => 'DateTime', lazy_build => 1         );
-has   summary    => ( is => 'ro', isa => 'Str'                               );
+                 handles => {  groups => 'elements', group_count => 'count' }          );
+has   headline   => ( is => 'ro', isa => 'Str'                                         );
+has   id         => ( is => 'ro', isa => 'Int'      , init_arg   => 'steamID64'        );
+has   limited    => ( is => 'ro', isa => 'Bool'     , init_arg   => 'isLimitedAccount' );
+has   location   => ( is => 'ro', isa => 'Str'                                         );
+has   name       => ( is => 'ro', isa => 'Str'      , init_arg   => 'realname'         );
+has   nick       => ( is => 'ro', isa => 'Str'      , init_arg   => 'steamID'          );
+has   online     => ( is => 'ro', isa => 'SteamBool', init_arg   => 'onlineState', coerce => 1 );
+has   rating     => ( is => 'ro', isa => 'Num'      , init_arg   => 'steamRating'      );
+has  _registered => ( is => 'ro', isa => 'Str'      , init_arg   => 'memberSince'      );
+has   registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1                  );
+has   summary    => ( is => 'ro', isa => 'Str'                                         );
 
-sub get
-{
-	$#_ || return;
+sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
 
-	my @users = map { my $xml < io "http://steamcommunity.com/@{[ /^\d+$/ ? 'profiles' : 'id' ]}/$_/?xml=1";
-
-	                  $xml =~ /^<\?xml.*<\/profile>$/s || next;
-
-	                  my $user = XML::Bare->new( text => $xml )->simple->{ profile };
-
-	                  $_[0]->new( banned =>      $user->{ vacBanned        },
-	                          custom_url =>      $user->{ customURL        },
-	                            __groups => [ map { $_->{ groupID64        } } @{ $user->{ groups }{ group } } ],
-	                            headline =>      $user->{ headline         },
-	                                  id =>      $user->{ steamID64        },
-	                             limited =>      $user->{ isLimitedAccount },
-	                            location =>      $user->{ location         },
-	                                name =>      $user->{ realname         },
-	                                nick =>      $user->{ steamID          },
-	                              online =>      $user->{ onlineState      } eq 'online',
-	                              rating =>      $user->{ steamRating      },
-	                         _registered =>      $user->{ memberSince      },
-	                             summary =>      $user->{ summary          } ) } ref $_[1] ? @{ $_[1] } : @_[ 1..$#_ ];
-
-	wantarray ? @users : $users[0];
-}
-
-sub _build__groups { [ WebService::Steam::Group->get( $_[0]->__groups ) ] }
+sub _build__groups { [ WebService::Steam::Group->get( map { $_->{ groupID64 } } @{ $_[0]->__groups->{ groups }{ group } } ) ] }
 
 sub _build_registered
 {
@@ -78,9 +59,9 @@ WebService::Steam - An OO Perl interface to the Steam community data
 
 =head1 SYNOPSIS
 
-	use WebService::Steam::User;
+	use WebService::Steam;
 
-	my $user = WebService::Steam::User->get( 'jraspass' );
+	my $user = steam user => 'jraspass';
 
 	print $user->name,
 	      ' joined steam in ',

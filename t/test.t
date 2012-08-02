@@ -1,21 +1,45 @@
 #!/usr/bin/perl
 
-use lib qw/lib t/;
+use lib 'lib';
 
 use IO::All::LWP;
 use Test::LWP::UserAgent;
-use Test::User;
+use Test::Most;
+
+#no strict 'refs';
 
 # patch the monkey, punch the duck
 
-my $ua = Test::LWP::UserAgent->new;
-   $ua->map_response( qr//, HTTP::Response->new( 200, 'OK', [ Content_Type => 'application/xml' ], do { local $/; <DATA> } ) );
+{
+	no warnings 'redefine';
 
-*IO::All::LWP::ua = sub { $ua };
+	my $ua = Test::LWP::UserAgent->new;
+	   $ua->map_response( qr//, HTTP::Response->new( 200, 'OK', [ Content_Type => 'application/xml' ], do { local $/; <DATA> } ) );
+
+	*IO::All::LWP::ua = sub { $ua };
+}
 
 # run the tests
 
-$_->runtests for map "Test::@{[ /(\w+)\.pm/ ]}", <t/Test/*.pm>;
+my %data = ( Group => 'foobar',
+              User => 'jraspass' );
+
+use_ok 'WebService::Steam';
+
+for ( qw/Group User/ )
+{
+	my $class = "WebService::Steam::$_";
+	my $sub   = "steam_\L$_";
+
+	use_ok    $class;
+	can_ok    $class, 'new';
+	    ok my $object = $class->new, "$class->new()";
+	isa_ok    $object , $class;
+	    ok    $object = __PACKAGE__->can( $sub )->( $data{ $_ } ), "$sub( '$data{ $_ }' )";
+	isa_ok    $object , $class;
+}
+
+done_testing;
 
 __DATA__
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
