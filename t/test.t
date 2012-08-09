@@ -6,22 +6,20 @@ use IO::All::LWP;
 use Test::LWP::UserAgent;
 use Test::Most;
 
-#no strict 'refs';
-
 # patch the monkey, punch the duck
 
-{
-	no warnings 'redefine';
-
-	my $ua = Test::LWP::UserAgent->new;
-	   $ua->map_response( qr//, HTTP::Response->new( 200, 'OK', [ Content_Type => 'application/xml' ], do { local $/; <DATA> } ) );
-
-	*IO::All::LWP::ua = sub { $ua };
-}
+#{
+#	no warnings 'redefine';
+#
+#	my $ua = Test::LWP::UserAgent->new;
+#	   $ua->map_response( qr//, HTTP::Response->new( 200, 'OK', [ Content_Type => 'application/xml' ], do { local $/; <DATA> } ) );
+#
+#	*IO::All::LWP::ua = sub { $ua };
+#}
 
 # run the tests
 
-my %data = ( Group => 'foobar',
+my %data = ( Group => 'valve',
               User => 'jraspass' );
 
 use_ok 'WebService::Steam';

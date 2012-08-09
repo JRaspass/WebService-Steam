@@ -3,36 +3,30 @@ package WebService::Steam;
 use strict;
 use warnings;
 
-use Data::Dumper;
-
 use Exporter;
 use IO::All;
 use WebService::Steam::Group;
 use WebService::Steam::User;
 use XML::Bare;
 
+our $AUTOLOAD;
 our @EXPORT  = qw/steam_group steam_user/;
 our @ISA     = 'Exporter';
 our $VERSION = .3;
 
-sub steam_group { _steam( 'WebService::Steam::Group', @_ ) }
-sub steam_user  { _steam( 'WebService::Steam::User' , @_ ) }
-
-sub _steam
+sub AUTOLOAD
 {
-	$#_ == 1 || return;
+	$AUTOLOAD =~ s/steam_(\w)/\u$1/;
 
 	my @objects = map
 	{
-		my $xml < io $_[0]->path( $_ );
+		my $path = $AUTOLOAD->path( $_ );
 
-		   $xml =~ /^<\?xml.*<\/profile>$/s || next;
+		my $xml < io $path;
 
-		my $hash = XML::Bare->new( text => $xml )->simple->{ profile };
+		$xml =~ /^<\?xml/ ? $AUTOLOAD->new_from_xml_hash( XML::Bare->new( text => $xml )->simple ) : ()
 
-		$_[0]->new( $hash )
-
-	} ref $_[1] ? @{ $_[1] } : @_[ 1..$#_ ];
+	} ref $_[0] ? @{ $_[0] } : @_;
 
 	wantarray ? @objects : $objects[0];
 }
@@ -45,8 +39,12 @@ __END__
 
 WebService::Steam - An OO Perl interface to the Steam community data
 
-=head1 MODULES AND UTILITIES
+=head1 EXPORTED METHODS
 
-=head2 WebService::Steam::Group
+=head2 steam_group
 
-=head2 WebService::Steam::User
+Returns one or more instances of WebService::Steam::Group
+
+=head2 steam_user
+
+Returns one or more instances of WebService::Steam::User
