@@ -1,7 +1,7 @@
 package WebService::Steam::User;
 
 use DateTime;
-use IO::All;   # IO::All::LWP also needed
+use IO::All;
 use Moose;
 use namespace::autoclean;
 use WebService::Steam;

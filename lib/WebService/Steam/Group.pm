@@ -1,6 +1,6 @@
 package WebService::Steam::Group;
 
-use IO::All;   # IO::All::LWP also needed
+use IO::All;
 use Moose;
 #use MooseX::MarkAsMethods autoclean => 1;
 use XML::Bare;
@@ -14,8 +14,8 @@ sub new_from_xml_hash
 {
 	my $hash = $_[1]->{ groupDetails };
 
-	$_[0]->new( { name => $hash->{ groupName } || 'foo',
-	           summary => $hash->{ summary   } || 'bar'} )
+	$_[0]->new( { name => $hash->{ groupName },
+	           summary => $hash->{ summary   } } )
 }
 
 sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'gid' : 'groups' ]}/$_[1]/memberslistxml" }
