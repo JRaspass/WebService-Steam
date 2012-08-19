@@ -14,7 +14,7 @@ has       avatar => ( is => 'ro',
               lazy_build => 1                            );
 has       banned => ( is => 'ro', isa => 'Bool'          );
 has   custom_url => ( is => 'ro', isa => 'Str'           );
-has     __groups => ( is => 'ro', isa => 'HashRef'       );
+has     __groups => ( is => 'ro', isa => 'ArrayRef'      );
 has      _groups => ( is => 'ro',
                      isa => 'ArrayRef[WebService::Steam::Group]',
                  handles => { groups => 'elements' },
@@ -39,23 +39,24 @@ sub new_from_xml_hash
 	my $hash = $_[1];
 
 	$_[0]->new( { _avatar => [ $hash->{ avatarIcon }, $hash->{ avatarMedium }, $hash->{ avatarFull } ],
-	               banned => $hash->{ vacBanned        },
-	           custom_url => $hash->{ customURL        },
-	             headline => $hash->{ headline         },
-	                   id => $hash->{ steamID64        },
-	              limited => $hash->{ isLimitedAccount },
-	             location => $hash->{ location         },
-	                 name => $hash->{ realname         },
-	                 nick => $hash->{ steamID          },
-	               online => $hash->{ onlineState      } eq 'online',
-	               rating => $hash->{ steamRating      },
-	          _registered => $hash->{ memberSince      },
-	              summary => $hash->{ summary          } } )
+	               banned =>   $hash->{ vacBanned        },
+	           custom_url =>   $hash->{ customURL        },
+	             __groups => [ map $_->{ groupID64 }, @{ $hash->{ groups }{ group } } ],
+	             headline =>   $hash->{ headline         },
+	                   id =>   $hash->{ steamID64        },
+	              limited =>   $hash->{ isLimitedAccount },
+	             location =>   $hash->{ location         },
+	                 name =>   $hash->{ realname         },
+	                 nick =>   $hash->{ steamID          },
+	               online =>   $hash->{ onlineState      } eq 'online',
+	               rating =>   $hash->{ steamRating      },
+	          _registered =>   $hash->{ memberSince      },
+	              summary =>   $hash->{ summary          } } )
 }
 
 sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
 
-sub _build__groups { [ steam_group( map { $_->{ groupID64 } } @{ $_[0]->__groups->{ groups }{ group } } ) ] }
+sub _build__groups { [ WebService::Steam::steam_group( $_[0]->__groups ) ] }
 
 sub _build_registered
 {
