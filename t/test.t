@@ -32,7 +32,7 @@ use_ok 'WebService::Steam';
 for ( keys %data )
 {
 	my $class = "WebService::Steam::$_";
-	my $sub   = "steam_\L$_";
+	my $sub   = "steam_\l$_";
 
 	use_ok    $class;
 	can_ok    $class, 'new';
