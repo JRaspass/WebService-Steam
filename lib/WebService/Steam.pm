@@ -37,7 +37,25 @@ __END__
  
 =head1 NAME
 
-WebService::Steam - An OO Perl interface to the Steam community data
+WebService::Steam - A Perl interface to the Steam community data
+
+=head1 SYNOPSIS
+
+	use WebService::Steam;
+
+	my $user = steam_user 'jraspass';
+
+	print $user->name,
+	      ' joined steam in ',
+	      $user->registered,
+	      ', has a rating of ',
+	      $user->rating,
+	      ', is from ',
+	      $user->location,
+	      ', and belongs to the following ',
+	      $user->group_count,
+	      ' groups: ',
+	      join ', ', $user->groups;
 
 =head1 EXPORTED METHODS
 
@@ -47,4 +65,11 @@ Returns one or more instances of WebService::Steam::Group
 
 =head2 steam_user
 
-Returns one or more instances of WebService::Steam::User
+Returns an instance of a Steam user, can take any combination of Steam usernames and IDs.
+
+In scalar context returns the first element of the array.
+ 
+	my $user  = steam_user(   'jraspass'                      );
+	my $user  = steam_user(               76561198005755687   );
+	my @users = steam_user(   'jraspass', 76561198005755687   );
+	my @users = steam_user( [ 'jraspass', 76561198005755687 ] );

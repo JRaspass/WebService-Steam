@@ -23,3 +23,11 @@ sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'gid' : 'groups' ]}
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+ 
+=head1 NAME
+
+WebService::Steam::User
+
+=head1 ATTRIBUTES

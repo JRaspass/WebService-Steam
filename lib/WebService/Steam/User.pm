@@ -72,73 +72,40 @@ __END__
  
 =head1 NAME
 
-WebService::Steam - An OO Perl interface to the Steam community data
+WebService::Steam::User
 
-=head1 SYNOPSIS
+=head1 ATTRIBUTES
 
-	use WebService::Steam;
-
-	my $user = steam user => 'jraspass';
-
-	print $user->name,
-	      ' joined steam in ',
-	      $user->registered,
-	      ', has a rating of ',
-	      $user->rating,
-	      ', is from ',
-	      $user->location,
-	      ', and belongs to the following ',
-	      $user->group_count,
-	      ' groups: ',
-	      join ', ', $user->groups;
-
-=head1 METHODS
- 
-=head2 Class Methods
-
-=head3 get
-
-Returns an instance of a Steam user, can take any combination of Steam usernames and IDs.
-
-In scalar context returns the first element of the array.
- 
-	my $user  = WebService::Steam::User->get(   'jraspass'                      );
-	my $user  = WebService::Steam::User->get(               76561198005755687   );
-	my @users = WebService::Steam::User->get(   'jraspass', 76561198005755687   );
-	my @users = WebService::Steam::User->get( [ 'jraspass', 76561198005755687 ] );
-
-=head2 Instance Methods
-
-=head3 banned
+=head2 banned
 
 Returns a boolean indicating whether or not the user has received a VAC ban.
 
-=head3 custom_url
+=head2 custom_url
 
-=head3 headline
+=head2 headline
 
-=head3 id
+=head2 id
 
-=head3 limited
+=head2 limited
 
-=head3 location
+=head2 location
 
-=head3 name
+=head2 name
 
-=head3 nick
+=head2 nick
 
-=head3 online
+=head2 online
 
-Returns a boolean indicating whether or not the user is currently online.
+A boolean indicating whether or not the user is currently online.
 
-=head3 rating
+=head2 rating
 
-=head3 registered
+=head2 registered
 
 A L<DateTime> representing when the user registered their Steam account.
 
-=head3 summary
+=head2 summary
 
-=head3 groups
+=head2 groups
 
-=head3 group_count
+=head2 group_count
