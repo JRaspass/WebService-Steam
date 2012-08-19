@@ -24,7 +24,7 @@ sub AUTOLOAD
 
 		my $xml < io $path;
 
-		$xml =~ /^<\?xml/ ? $AUTOLOAD->new_from_xml_hash( XML::Bare->new( text => $xml )->simple ) : ()
+		$xml =~ /^<\?xml/ ? $AUTOLOAD->new_from_xml_hash( ( %{ XML::Bare->new( text => $xml )->simple } )[1] ) : ()
 
 	} ref $_[0] ? @{ $_[0] } : @_;
 

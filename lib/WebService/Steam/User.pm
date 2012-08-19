@@ -33,7 +33,7 @@ has   summary    => ( is => 'ro', isa => 'Str'                       );
 
 sub new_from_xml_hash
 {
-	my $hash = $_[1]->{ profile };
+	my $hash = $_[1];
 
 	$_[0]->new( { _avatar => [ $hash->{ avatarIcon }, $hash->{ avatarMedium }, $hash->{ avatarFull } ],
 	               banned => $hash->{ vacBanned        },
