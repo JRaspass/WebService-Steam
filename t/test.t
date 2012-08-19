@@ -35,10 +35,8 @@ for ( keys %data )
 	my $sub   = "steam_\l$_";
 
 	use_ok    $class;
-	can_ok    $class, 'new';
-	    ok my $object = $class->new, "$class->new()";
-	isa_ok    $object , $class;
-	    ok    $object = __PACKAGE__->can( $sub )->( $data{ $_ } ), "$sub( '$data{ $_ }' )";
+	new_ok    $class;
+	    ok my $object = __PACKAGE__->can( $sub )->( $data{ $_ } ), "$sub( '$data{ $_ }' )";
 	isa_ok    $object , $class;
 }
 
