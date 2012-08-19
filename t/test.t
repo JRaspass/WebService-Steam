@@ -12,12 +12,12 @@ use Test::Most;
 {
 	no warnings 'redefine';
 
-   Test::LWP::UserAgent->map_response( qr/./, sub
-   {
-   	HTTP::Response->new( 200, 'OK', [], $_[0]->uri =~ m!/(?:gid|groups)/!  ? io( 't/group.xml' )->all
-   	                                  : $_[0]->uri =~ m!/(?:profiles|id)/! ? io( 't/user.xml'  )->all
-   	                                  :                                      '' )
-   } );
+	Test::LWP::UserAgent->map_response( qr/./, sub
+	{
+		HTTP::Response->new( 200, 'OK', [], $_[0]->uri =~ m!/(?:gid|groups)/!  ? io( 't/group.xml' )->all
+		                                  : $_[0]->uri =~ m!/(?:profiles|id)/! ? io( 't/user.xml'  )->all
+		                                  :                                      '' )
+	} );
 
 	*IO::All::LWP::ua = sub { Test::LWP::UserAgent->new };
 }
