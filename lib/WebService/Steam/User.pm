@@ -8,28 +8,31 @@ use WebService::Steam;
 use WebService::Steam::Avatar;
 use XML::Bare;
 
-has  _avatar     => ( is => 'ro', isa => 'ArrayRef[Str]' );
-has   avatar     => ( is => 'ro', isa => 'WebService::Steam::Avatar', lazy_build => 1 );
-has   banned     => ( is => 'ro', isa => 'Bool'                      );
-has   custom_url => ( is => 'ro', isa => 'Str'                       );
-has __groups     => ( is => 'ro', isa => 'HashRef'                   );
-has  _groups     => ( is => 'ro',
+has      _avatar => ( is => 'ro', isa => 'ArrayRef[Str]' );
+has       avatar => ( is => 'ro',
+                     isa => 'WebService::Steam::Avatar',
+              lazy_build => 1                            );
+has       banned => ( is => 'ro', isa => 'Bool'          );
+has   custom_url => ( is => 'ro', isa => 'Str'           );
+has     __groups => ( is => 'ro', isa => 'HashRef'       );
+has      _groups => ( is => 'ro',
                      isa => 'ArrayRef[WebService::Steam::Group]',
-                  traits => [ 'Array' ],
+                 handles => { groups => 'elements' },
               lazy_build => 1,
-                 handles => {  groups => 'elements',
-                          group_count => 'count' }                   );
-has   headline   => ( is => 'ro', isa => 'Str'                       );
-has   id         => ( is => 'ro', isa => 'Int'                       );
-has   limited    => ( is => 'ro', isa => 'Bool'                      );
-has   location   => ( is => 'ro', isa => 'Str'                       );
-has   name       => ( is => 'ro', isa => 'Str'                       );
-has   nick       => ( is => 'ro', isa => 'Str'                       );
-has   online     => ( is => 'ro', isa => 'Bool'                      );
-has   rating     => ( is => 'ro', isa => 'Num'                       );
-has  _registered => ( is => 'ro', isa => 'Str'                       );
-has   registered => ( is => 'ro', isa => 'DateTime', lazy_build => 1 );
-has   summary    => ( is => 'ro', isa => 'Str'                       );
+                  traits => [ 'Array' ]                  );
+has     headline => ( is => 'ro', isa => 'Str'           );
+has           id => ( is => 'ro', isa => 'Int'           );
+has      limited => ( is => 'ro', isa => 'Bool'          );
+has     location => ( is => 'ro', isa => 'Str'           );
+has         name => ( is => 'ro', isa => 'Str'           );
+has         nick => ( is => 'ro', isa => 'Str'           );
+has       online => ( is => 'ro', isa => 'Bool'          );
+has       rating => ( is => 'ro', isa => 'Num'           );
+has  _registered => ( is => 'ro', isa => 'Str'           );
+has   registered => ( is => 'ro',
+                     isa => 'DateTime',
+              lazy_build => 1                            );
+has      summary => ( is => 'ro', isa => 'Str'           );
 
 sub new_from_xml_hash
 {

@@ -7,7 +7,7 @@ use XML::Bare;
 
 #use overload '""' => sub { $_[0]->name };
 
-has name    => ( is => 'ro', isa => 'Str' );
+has    name => ( is => 'ro', isa => 'Str' );
 has summary => ( is => 'ro', isa => 'Str' );
 
 sub new_from_xml_hash

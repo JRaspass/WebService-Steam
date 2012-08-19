@@ -20,9 +20,7 @@ sub AUTOLOAD
 
 	my @objects = map
 	{
-		my $path = $AUTOLOAD->path( $_ );
-
-		my $xml < io $path;
+		my $xml < io( $AUTOLOAD->path( $_ ) );
 
 		$xml =~ /^<\?xml/ ? $AUTOLOAD->new_from_xml_hash( ( %{ XML::Bare->new( text => $xml )->simple } )[1] ) : ()
 
@@ -53,9 +51,9 @@ WebService::Steam - A Perl interface to the Steam community data
 	      ', is from ',
 	      $user->location,
 	      ', and belongs to the following ',
-	      $user->group_count,
+	      scalar( $user->groups ),
 	      ' groups: ',
-	      join ', ', $user->groups;
+	      join( ', ', $user->groups );
 
 =head1 EXPORTED METHODS
 
