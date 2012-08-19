@@ -3,7 +3,6 @@ package WebService::Steam::Group;
 use IO::All;
 use Moose;
 #use MooseX::MarkAsMethods autoclean => 1;
-use XML::Bare;
 
 #use overload '""' => sub { $_[0]->name };
 

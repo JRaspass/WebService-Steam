@@ -6,7 +6,6 @@ use Moose;
 use namespace::autoclean;
 use WebService::Steam;
 use WebService::Steam::Avatar;
-use XML::Bare;
 
 has      _avatar => ( is => 'ro', isa => 'ArrayRef[Str]' );
 has       avatar => ( is => 'ro',
@@ -111,5 +110,3 @@ A L<DateTime> representing when the user registered their Steam account.
 =head2 summary
 
 =head2 groups
-
-=head2 group_count
