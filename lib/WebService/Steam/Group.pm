@@ -22,3 +22,11 @@ __END__
 WebService::Steam::User
 
 =head1 ATTRIBUTES
+
+=head2 name
+
+A string of the name of the group.
+
+=head2 summary
+
+A string of the summary of the group.

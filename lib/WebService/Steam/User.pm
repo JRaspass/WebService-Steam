@@ -57,13 +57,19 @@ WebService::Steam::User
 
 =head2 banned
 
-A boolean indicating whether or not the user has received a VAC ban.
+A boolean of the user's VAC banned status.
 
 =head2 custom_url
 
+A string of the user's custom URL
+
 =head2 headline
 
+A string of the user's headline
+
 =head2 id
+
+An integer of the user's ID
 
 =head2 limited
 
@@ -79,7 +85,7 @@ A string of the user's chosen nick name.
 
 =head2 online
 
-A boolean indicating whether or not the user is currently online.
+A boolean of the user's current online status.
 
 =head2 rating
 

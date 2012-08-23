@@ -42,7 +42,8 @@ __END__
  
 =head1 NAME
 
-WebService::Steam - A Perl interface to the Steam community data
+WebService::Steam - A Perl interface to the
+L<Steam community data|https://partner.steamgames.com/documentation/community_data>
 
 =head1 SYNOPSIS
 
@@ -66,13 +67,18 @@ WebService::Steam - A Perl interface to the Steam community data
 
 =head2 steam_group
 
-Returns instance(s) of L<WebService::Steam::Group>.
+Returns instance(s) of L<WebService::Steam::Group>, can take any combination of group names and IDs.
 
 In scalar context returns the first element of the array.
 
+	my $group  = steam_group(   'valve'                       );
+	my $group  = steam_group(            103582791429521412   );
+	my @groups = steam_group(   'vavle', 103582791429521412   );
+	my @groups = steam_group( [ 'vavle', 103582791429521412 ] );
+
 =head2 steam_user
 
-Returns instance(s) of L<WebService::Steam::User>, can take any combination of Steam usernames and IDs.
+Returns instance(s) of L<WebService::Steam::User>, can take any combination of usernames and IDs.
 
 In scalar context returns the first element of the array.
  
