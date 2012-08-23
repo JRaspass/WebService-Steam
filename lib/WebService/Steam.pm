@@ -14,12 +14,7 @@ our @EXPORT  = qw/steam_group steam_user/;
 our @ISA     = 'Exporter';
 our $VERSION = .4;
 
-sub flatten
-{
-	my $hash = $_[0];
-
-	map { ref $$hash{ $_ } eq 'HASH' ? flatten( $$hash{ $_ } ) : ( $_ => $$hash{ $_ } ) } keys %$hash;
-}
+sub flatten { map { my $v = $_[0]{ $_ }; ref $v eq 'HASH' ? flatten( $v ) : ( $_ => $v ) } keys %{ $_[0] } }
 
 sub AUTOLOAD
 {
