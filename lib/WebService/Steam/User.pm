@@ -4,7 +4,6 @@ use DateTime;
 use IO::All;
 use Moose;
 use Moose::Util::TypeConstraints;
-use namespace::autoclean;
 use WebService::Steam;
 
 subtype 'SteamBool',   as 'Bool';
@@ -29,9 +28,9 @@ has _registered => ( is => 'ro', isa => 'Str'      , init_arg => 'memberSince'  
 has  registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1                        );
 has     summary => ( is => 'ro', isa => 'Str'                                               );
 
-sub           path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
+sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
 
-sub _build__groups { [ WebService::Steam::steam_group( map { $$_{ groupID64 } } @{ $_[0]->__groups } ) ]  }
+sub _build__groups { [ WebService::Steam::steam_group( map $$_{ groupID64 }, @{ $_[0]->__groups } ) ] }
 
 sub _build_registered
 {
