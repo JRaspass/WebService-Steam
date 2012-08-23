@@ -12,7 +12,7 @@ use XML::Bare;
 our $AUTOLOAD;
 our @EXPORT  = qw/steam_group steam_user/;
 our @ISA     = 'Exporter';
-our $VERSION = .3;
+our $VERSION = .4;
 
 sub flatten
 {
@@ -73,8 +73,8 @@ In scalar context returns the first element of the array.
 
 	my $group  = steam_group(   'valve'                       );
 	my $group  = steam_group(            103582791429521412   );
-	my @groups = steam_group(   'vavle', 103582791429521412   );
-	my @groups = steam_group( [ 'vavle', 103582791429521412 ] );
+	my @groups = steam_group(   'valve', 103582791429521412   );
+	my @groups = steam_group( [ 'valve', 103582791429521412 ] );
 
 =head2 steam_user
 
