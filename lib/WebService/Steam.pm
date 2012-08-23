@@ -14,15 +14,22 @@ our @EXPORT  = qw/steam_group steam_user/;
 our @ISA     = 'Exporter';
 our $VERSION = .3;
 
+sub flatten
+{
+	my $hash = $_[0];
+
+	map { ref $$hash{ $_ } eq 'HASH' ? flatten( $$hash{ $_ } ) : ( $_ => $$hash{ $_ } ) } keys %$hash;
+}
+
 sub AUTOLOAD
 {
 	$AUTOLOAD =~ s/steam_(\w)/\u$1/;
 
-	my @objects = map
-	{
-		my $xml < io( $AUTOLOAD->path( $_ ) );
+	my @objects = map {
 
-		$xml =~ /^<\?xml/ ? $AUTOLOAD->new_from_xml_hash( ( %{ XML::Bare->new( text => $xml )->simple } )[1] ) : ()
+		my $_ < io( $AUTOLOAD->path( $_ ) );
+
+		/^<\?xml/ ? $AUTOLOAD->new( flatten( XML::Bare->new( text => $_ )->simple ) ) : ();
 
 	} ref $_[0] ? @{ $_[0] } : @_;
 
@@ -59,11 +66,13 @@ WebService::Steam - A Perl interface to the Steam community data
 
 =head2 steam_group
 
-Returns one or more instances of WebService::Steam::Group
+Returns instance(s) of L<WebService::Steam::Group>.
+
+In scalar context returns the first element of the array.
 
 =head2 steam_user
 
-Returns an instance of a Steam user, can take any combination of Steam usernames and IDs.
+Returns instance(s) of L<WebService::Steam::User>, can take any combination of Steam usernames and IDs.
 
 In scalar context returns the first element of the array.
  

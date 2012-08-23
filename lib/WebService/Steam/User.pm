@@ -3,59 +3,35 @@ package WebService::Steam::User;
 use DateTime;
 use IO::All;
 use Moose;
+use Moose::Util::TypeConstraints;
 use namespace::autoclean;
-use URI;
 use WebService::Steam;
 
-has       banned => ( is => 'ro', isa => 'Bool'          );
-has   custom_url => ( is => 'ro', isa => 'Str'           );
-has     __groups => ( is => 'ro', isa => 'ArrayRef'      );
-has      _groups => ( is => 'ro',
-                     isa => 'ArrayRef[WebService::Steam::Group]',
-                 handles => { groups => 'elements' },
-              lazy_build => 1,
-                  traits => [ 'Array' ]                  );
-has     headline => ( is => 'ro', isa => 'Str'           );
-has       _icons => ( is => 'ro',
-                     isa => 'ArrayRef[URI]',
-                 handles => { avatars => 'elements' },
-                  traits => [ 'Array' ]                  );
-has           id => ( is => 'ro', isa => 'Int'           );
-has      limited => ( is => 'ro', isa => 'Bool'          );
-has     location => ( is => 'ro', isa => 'Str'           );
-has         name => ( is => 'ro', isa => 'Str'           );
-has         nick => ( is => 'ro', isa => 'Str'           );
-has       online => ( is => 'ro', isa => 'Bool'          );
-has       rating => ( is => 'ro', isa => 'Num'           );
-has  _registered => ( is => 'ro', isa => 'Str'           );
-has   registered => ( is => 'ro',
-                     isa => 'DateTime',
-              lazy_build => 1                            );
-has      summary => ( is => 'ro', isa => 'Str'           );
+subtype 'SteamBool',   as 'Bool';
+ coerce 'SteamBool', from 'Str', via { /^online$/ };
 
-sub new_from_xml_hash
-{
-	my $hash = $_[1];
+has      banned => ( is => 'ro', isa => 'Bool'     , init_arg => 'vacBanned'                );
+has  custom_url => ( is => 'ro', isa => 'Str'      , init_arg => 'customURL'                );
+has    __groups => ( is => 'ro', isa => 'ArrayRef' , init_arg => 'group'                    );
+has     _groups => ( isa => 'ArrayRef[WebService::Steam::Group]'                             ,
+                 handles => { groups => 'elements' }                                         ,
+              lazy_build => 1                                                                ,
+                  traits => [ 'Array' ]                                                     );
+has    headline => ( is => 'ro', isa => 'Str'                                               );
+has          id => ( is => 'ro', isa => 'Int'      , init_arg => 'steamID64'                );
+has     limited => ( is => 'ro', isa => 'Bool'     , init_arg => 'isLimitedAccount'         );
+has    location => ( is => 'ro', isa => 'Str'                                               );
+has        name => ( is => 'ro', isa => 'Str'      , init_arg => 'realname'                 );
+has        nick => ( is => 'ro', isa => 'Str'      , init_arg => 'steamID'                  );
+has      online => ( is => 'ro', isa => 'SteamBool', init_arg => 'onlineState', coerce => 1 );
+has      rating => ( is => 'ro', isa => 'Num'      , init_arg => 'steamRating'              );
+has _registered => ( is => 'ro', isa => 'Str'      , init_arg => 'memberSince'              );
+has  registered => ( is => 'ro', isa => 'DateTime' , lazy_build => 1                        );
+has     summary => ( is => 'ro', isa => 'Str'                                               );
 
-	$_[0]->new( { banned =>   $hash->{ vacBanned        },
-	          custom_url =>   $hash->{ customURL        },
-	            __groups => [ map $_->{ groupID64 }, @{ $hash->{ groups }{ group } } ],
-	            headline =>   $hash->{ headline         },
-	              _icons => [ map URI->new( $hash->{ "avatar$_" } ), qw/Icon Medium Full/ ],
-	                  id =>   $hash->{ steamID64        },
-	             limited =>   $hash->{ isLimitedAccount },
-	            location =>   $hash->{ location         },
-	                name =>   $hash->{ realname         },
-	                nick =>   $hash->{ steamID          },
-	              online =>   $hash->{ onlineState      } eq 'online',
-	              rating =>   $hash->{ steamRating      },
-	         _registered =>   $hash->{ memberSince      },
-	             summary =>   $hash->{ summary          } } )
-}
+sub           path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
 
-sub path { "http://steamcommunity.com/@{[ $_[1] =~ /^\d+$/ ? 'profiles' : 'id' ]}/$_[1]/?xml=1" }
-
-sub _build__groups { [ WebService::Steam::steam_group( $_[0]->__groups ) ] }
+sub _build__groups { [ WebService::Steam::steam_group( map { $$_{ groupID64 } } @{ $_[0]->__groups } ) ]  }
 
 sub _build_registered
 {
@@ -86,10 +62,6 @@ A boolean indicating whether or not the user has received a VAC ban.
 =head2 custom_url
 
 =head2 headline
-
-=head2 icons
-
-An array of L<URI>s of the user's icon in various sizes. From smallest to largest.
 
 =head2 id
 
