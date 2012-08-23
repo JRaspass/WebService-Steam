@@ -2,9 +2,9 @@ package WebService::Steam::Group;
 
 use IO::All;
 use Moose;
-#use MooseX::MarkAsMethods autoclean => 1;
+use MooseX::MarkAsMethods autoclean => 1;
 
-#use overload '""' => sub { $_[0]->name };
+use overload '""' => sub { $_[0]->name };
 
 has    name => ( is => 'ro', isa => 'Str', init_arg => 'groupName' );
 has summary => ( is => 'ro', isa => 'Str' );
