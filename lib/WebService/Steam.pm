@@ -14,7 +14,7 @@ our @EXPORT  = qw/steam_group steam_user/;
 our @ISA     = 'Exporter';
 our $VERSION = .4;
 
-sub _flatten { map { my $v = $_[0]{ $_ }; ref $v eq 'HASH' ? flatten( $v ) : ( $_ => $v ) } keys %{ $_[0] } }
+sub _flatten { map { my $v = $_[0]{ $_ }; ref $v eq 'HASH' ? _flatten( $v ) : ( $_ => $v ) } keys %{ $_[0] } }
 
 sub AUTOLOAD
 {
@@ -22,7 +22,7 @@ sub AUTOLOAD
 
 	my @objects = map {
 
-		my $_ < io( $AUTOLOAD->path( $_ ) );
+		my $_ < io( $AUTOLOAD->_path( $_ ) );
 
 		/^<\?xml/ ? $AUTOLOAD->new( _flatten( XML::Bare->new( text => $_ )->simple ) ) : ();
 

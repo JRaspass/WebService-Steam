@@ -40,4 +40,10 @@ for ( keys %data )
 	isa_ok    $object , $class;
 }
 
+eval 'use Test::Pod';
+SKIP: { $@ ? skip 'Test::Pod not installed', 1 : map pod_file_ok( $_ ), all_pod_files() }
+
+eval 'use Test::Pod::Coverage';
+SKIP: { $@ ? skip 'Test::Pod not installed', 1 : map pod_coverage_ok( $_ ), all_modules() }
+
 done_testing;
