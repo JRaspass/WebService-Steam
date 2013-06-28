@@ -35,6 +35,7 @@ sub _build__groups { [ WebService::Steam::steam_group( map $$_{ groupID64 }, @{ 
 sub _build_registered
 {
 	my ( $month, $day, $year ) = split /,? /, $_[0]->_registered;
+	$day =~ s/[^0-9]//g;
 
 	my %months;
 	   @months{ qw/January Febuary March April May June July August September October November December/ } = ( 1..12 );
